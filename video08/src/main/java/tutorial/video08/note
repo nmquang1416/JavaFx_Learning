@@ -1,0 +1,2 @@
+///VBox
+VBox lays out its children in a single vertical column. If the vbox has a border and/or padding set, then the contents will be layed out within those insets.

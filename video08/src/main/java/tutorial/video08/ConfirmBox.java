@@ -1,5 +1,6 @@
-package org.openjfx.video06;
+package tutorial.video08;
 
+import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -9,36 +10,34 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class ConfirmBox {
-    static boolean answer;
-
-    public static boolean showConfirmBox(String title, String message) {
+    static Boolean answer;
+    public static Boolean display(String title, String message){
         Stage window = new Stage();
-        window.initModality(Modality.WINDOW_MODAL);
+        window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle(title);
         window.setMinWidth(250);
         Label label = new Label(message);
         label.setText(message);
 
-        //Create two buttons
-        Button yesButton = new Button("Yes");
-        Button noButton = new Button("No");
+        Button btnYes = new Button("Yes");
+        Button btnNo = new Button("No");
 
-        yesButton.setOnAction(e -> {
+        btnYes.setOnAction(actionEvent -> {
             answer = true;
             window.close();
         });
-        noButton.setOnAction(e -> {
+
+        btnNo.setOnAction(actionEvent -> {
             answer = false;
             window.close();
         });
 
-        VBox layout = new VBox(10);
-        layout.getChildren().addAll(label, yesButton, noButton);
-        layout.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(layout);
+        VBox vBox = new VBox(10);
+        vBox.getChildren().addAll(label, btnYes, btnNo);
+        vBox.setAlignment(Pos.CENTER);
+        Scene scene = new Scene(vBox);
         window.setScene(scene);
         window.showAndWait();
-
         return answer;
     }
 }
