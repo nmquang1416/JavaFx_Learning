@@ -13,7 +13,7 @@ public class ConfirmBox {
 
     public static boolean showConfirmBox(String title, String message) {
         Stage window = new Stage();
-        window.initModality(Modality.APPLICATION_MODAL);
+        window.initModality(Modality.WINDOW_MODAL);
         window.setTitle(title);
         window.setMinWidth(250);
         Label label = new Label(message);
