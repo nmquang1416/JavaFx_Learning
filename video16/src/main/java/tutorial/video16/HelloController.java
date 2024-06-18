@@ -1,4 +1,4 @@
-package tutorial.video10;
+package tutorial.video16;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
