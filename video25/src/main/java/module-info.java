@@ -3,6 +3,6 @@ module tutorial.video25 {
     requires javafx.fxml;
 
 
-    opens tutorial.video25 to javafx.fxml;
+    opens tutorial.video25 to javafx.graphics, javafx.fxml;
     exports tutorial.video25;
 }

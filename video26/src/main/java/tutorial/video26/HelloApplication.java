@@ -1,4 +1,4 @@
-package tutorial.video25;
+package tutorial.video26;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -11,8 +11,6 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Objects;
-
 
 
 public class HelloApplication extends Application {
@@ -55,7 +53,7 @@ public class HelloApplication extends Application {
         grid.getChildren().addAll(nameLabel, username, passwordLabel, password, loginButton);
 
         Scene scene = new Scene(grid, 300, 250);
-        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+        scene.getStylesheets().add("tutorial/video26/style.css");
         window.setScene(scene);
         window.show();
 
