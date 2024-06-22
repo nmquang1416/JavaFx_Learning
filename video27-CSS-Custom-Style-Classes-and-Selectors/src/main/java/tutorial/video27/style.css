@@ -1,0 +1,21 @@
+.root{
+    -fx-background-color: #343434;
+    -fx-font-size: 16pt ;
+}
+.label{
+    -fx-text-fill: #ed3636;
+
+}
+.button{
+    -fx-background-color: #ab46b4;
+    -fx-text-fill: #fff;
+    -fx-background-radius: 8;
+}
+.button-sign-up{
+    -fx-background-color: #4672b4;
+    -fx-text-fill: #fff;
+    -fx-background-radius: 8;
+}
+#bold-label{
+    -fx-font-weight: bold;
+}
