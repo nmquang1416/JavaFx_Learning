@@ -1,4 +1,4 @@
-package tutorial.video23;
+package tutorial.video24;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -59,9 +59,27 @@ public class HelloApplication extends Application {
         autoSave.setSelected(true);
         helpMenu.getItems().addAll(showLines, autoSave);
 
+        //Difficulty Radio MenuItems
+        Menu difficultyMenu = new Menu("Difficulty");
+        ToggleGroup difficultyGroup = new ToggleGroup();
+
+        RadioMenuItem easy = new RadioMenuItem("Easy");
+        easy.setOnAction(event -> showRadioMenu(easy));
+        RadioMenuItem medium = new RadioMenuItem("Medium");
+        easy.setOnAction(event -> showRadioMenu(medium));
+        RadioMenuItem hard = new RadioMenuItem("Hard");
+        easy.setOnAction(event -> showRadioMenu(hard));
+
+        easy.setToggleGroup(difficultyGroup);
+        medium.setToggleGroup(difficultyGroup);
+        hard.setToggleGroup(difficultyGroup);
+
+        difficultyMenu.getItems().addAll(easy, medium, hard);
+
+
         //Main Menu bar
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(fileMenu, editMenu, helpMenu);
+        menuBar.getMenus().addAll(fileMenu, editMenu, helpMenu, difficultyMenu);
 
         layout = new BorderPane();
         layout.setTop(menuBar);
@@ -71,9 +89,16 @@ public class HelloApplication extends Application {
     }
     public void showCheckMenu(CheckMenuItem checkMenuItemMenuItem){
         if (checkMenuItemMenuItem.isSelected()){
-            System.out.println(checkMenuItemMenuItem.getText() + "Showing lines");
+            System.out.println(checkMenuItemMenuItem.getText() + " Showing lines");
         } else {
-            System.out.println(checkMenuItemMenuItem.getText() + "Hiding lines");
+            System.out.println(checkMenuItemMenuItem.getText() + " Hiding lines");
+        }
+    }
+    public void showRadioMenu(RadioMenuItem checkMenuItemMenuItem){
+        if (checkMenuItemMenuItem.isSelected()){
+            System.out.println(checkMenuItemMenuItem.getText() + " Showing lines");
+        } else {
+            System.out.println(checkMenuItemMenuItem.getText() + " Hiding lines");
         }
     }
 
