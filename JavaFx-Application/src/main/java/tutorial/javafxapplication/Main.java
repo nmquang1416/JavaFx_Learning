@@ -32,10 +32,10 @@ public class Main extends Application {
         buttonAdd.setOnAction(event -> studentController.createNewStudent());
 
         Button buttonDelete = new Button("Delete Student");
-        buttonDelete.setOnAction(event -> {studentController.deleteStudent();});
+        buttonDelete.setOnAction(event -> studentController.deleteStudent());
 
         Button buttonEdit = new Button("Edit Student");
-        buttonEdit.setOnAction(event -> {});
+        buttonEdit.setOnAction(event -> studentController.editStudent());
 
         TextField findStudent = new TextField();
         findStudent.setPromptText("Find Student");

@@ -5,6 +5,6 @@ module tutorial.javafxapplication {
     requires org.kordamp.bootstrapfx.core;
     requires java.sql;
 
-    opens tutorial.javafxapplication to javafx.fxml;
+    opens tutorial.javafxapplication to javafx.graphics,javafx.fxml;
     exports tutorial.javafxapplication;
 }
