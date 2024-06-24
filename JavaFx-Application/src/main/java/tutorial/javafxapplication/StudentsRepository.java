@@ -47,7 +47,7 @@ public class StudentsRepository {
                 student.setAge(resultSet.getInt("age"));
                 student.setAddress(resultSet.getString("address"));
             }
-            System.out.println("successfully loaded student");
+
             connection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -65,7 +65,6 @@ public class StudentsRepository {
             preparedStatement.setString(3, student.getAddress());
             preparedStatement.execute();
 
-            System.out.println("successfully saved student");
             connection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);

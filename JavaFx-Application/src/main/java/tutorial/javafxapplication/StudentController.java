@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ public class StudentController {
     Stage window = new Stage();
     ConfirmBox confirmBox = new ConfirmBox();
     StudentsRepository studentsRepository = new StudentsRepository();
+    ObservableList<Student> students = FXCollections.observableArrayList();
 
     TextField nameField = new TextField();
     TextField ageField = new TextField();
@@ -29,10 +31,13 @@ public class StudentController {
     TableView<Student> tableView;
 
     public TableView<Student> showAllStudents() {
-        StudentsRepository studentsRepository = new StudentsRepository();
+        CheckBox box1 = new CheckBox("Bacon");
 
         //tao cac cot
-        TableColumn<Student, Long> idColumn = new TableColumn<>("Id");
+        TableColumn<Student, CheckBox> actionColumn = new TableColumn<>("Select");
+        actionColumn.setMinWidth(50);
+
+        TableColumn<Student, String> idColumn = new TableColumn<>("Id");
         idColumn.setMinWidth(100);
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
@@ -49,13 +54,12 @@ public class StudentController {
         addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
 
         //dua thong tin vao bang
-        ObservableList<Student> students = FXCollections.observableArrayList();
         students.addAll(studentsRepository.findAll());
 
         //Tao va add vao bang
         tableView = new TableView<>();
         tableView.setItems(students);
-        tableView.getColumns().addAll(idColumn, nameColumn, ageColumn, addressColumn);
+        tableView.getColumns().addAll(actionColumn, idColumn, nameColumn, ageColumn, addressColumn);
         tableView.setEditable(true);
         return tableView;
     }
@@ -67,7 +71,7 @@ public class StudentController {
         window.setTitle("Create New Student");
         window.setMinWidth(400);
         window.setResizable(false);
-//        window.initModality(Modality.APPLICATION_MODAL);
+        window.initModality(Modality.APPLICATION_MODAL);
 
         Text title = new Text("Create New Student");
 
@@ -149,12 +153,14 @@ public class StudentController {
         ObservableList<Student> students, selectedStudents;
         students = tableView.getItems();
         selectedStudents = tableView.getSelectionModel().getSelectedItems();
+
 //        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 //        alert.setTitle("Delete Student");
 //        alert.setHeaderText("Delete Student");
 //        alert.setContentText("Are you sure you want to delete this student?");
 //        Optional<ButtonType> result = alert.showAndWait();
 //        System.out.println(result.get());
+
         if (confirmedBox("Delete")) {
             for (Student student : students) {
                 if (selectedStudents.contains(student)) {
@@ -175,7 +181,6 @@ public class StudentController {
         ObservableList<Student> students, selectedStudents;
         students = tableView.getItems();
         selectedStudents = tableView.getSelectionModel().getSelectedItems();
-        Text errorEmpty = new Text();
         Student student = new Student();
 
         window.setTitle("Edit Student");
@@ -269,6 +274,62 @@ public class StudentController {
         Scene scene = new Scene(vbox, 300, 250);
         window.setScene(scene);
         window.showAndWait();
+    }
+
+    public TableView<Student> findStudent(String findId){
+        TableView<Student> tableView = new TableView<>();
+        if (studentsRepository.findById(Long.parseLong(findId)) != null){
+
+            window.setTitle("Find Student");
+            window.setMinWidth(400);
+            window.setResizable(false);
+
+            //tao cac cot
+            TableColumn<Student, Long> idColumn = new TableColumn<>("Id");
+            idColumn.setMinWidth(100);
+            idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+            TableColumn<Student, String> nameColumn = new TableColumn<>("Name");
+            nameColumn.setMinWidth(200);
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+            TableColumn<Student, Integer> ageColumn = new TableColumn<>("Age");
+            ageColumn.setMinWidth(100);
+            ageColumn.setCellValueFactory(new PropertyValueFactory<>("age"));
+
+            TableColumn<Student, String> addressColumn = new TableColumn<>("Address");
+            addressColumn.setMinWidth(200);
+            addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+
+            //Tao va add vao bang
+            Student student = studentsRepository.findById(Long.parseLong(findId));
+            ObservableList<Student> students = FXCollections.observableArrayList();
+            students.addAll(student);
+            System.out.println(student);
+            System.out.println("successfully find student");
+            tableView.setItems(students);
+            tableView.getColumns().addAll(idColumn, nameColumn, ageColumn, addressColumn);
+            tableView.setEditable(true);
+//            tableView.refresh();
+            Scene scene = new Scene(tableView, 600, 300);
+            window.setScene(scene);
+            window.showAndWait();
+
+        } else if (findId.trim().isEmpty()){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Founding Notify");
+            alert.setHeaderText("Field Empty!");
+            alert.setContentText("Not Field");
+            alert.showAndWait();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Founding Notify");
+            alert.setHeaderText("Not Found!");
+            alert.setContentText("Not Found Student");
+            alert.show();
+        }
+
+        return tableView;
     }
 
 
