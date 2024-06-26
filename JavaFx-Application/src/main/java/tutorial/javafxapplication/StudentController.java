@@ -1,22 +1,15 @@
 package tutorial.javafxapplication;
 
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.css.CssParser;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-
-import java.util.Optional;
 
 public class StudentController {
     Stage window = new Stage();
@@ -71,7 +64,6 @@ public class StudentController {
         window.setTitle("Create New Student");
         window.setMinWidth(400);
         window.setResizable(false);
-        window.initModality(Modality.APPLICATION_MODAL);
 
         Text title = new Text("Create New Student");
 
@@ -150,35 +142,40 @@ public class StudentController {
     }
 
     public void deleteStudent() {
-        ObservableList<Student> students, selectedStudents;
+        ObservableList<Student> selectedStudents;
         students = tableView.getItems();
         selectedStudents = tableView.getSelectionModel().getSelectedItems();
 
-//        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-//        alert.setTitle("Delete Student");
-//        alert.setHeaderText("Delete Student");
-//        alert.setContentText("Are you sure you want to delete this student?");
-//        Optional<ButtonType> result = alert.showAndWait();
-//        System.out.println(result.get());
+        boolean answer = true;
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
-        if (confirmedBox("Delete")) {
-            for (Student student : students) {
-                if (selectedStudents.contains(student)) {
-                    studentsRepository.delete(student.getId());
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        System.out.println(selectedStudents.size());
+
+        if (selectedStudents.size() != 0){
+            if (confirmedBox("Delete")){
+                for (Student student : students) {
+                    if (selectedStudents.contains(student)) {
+                        studentsRepository.delete(student.getId());
+                    }
                     alert.setTitle("Delete Notify");
                     alert.setHeaderText("Delete done!");
                     alert.setContentText("Student " + student.getName() + " are delete!");
                     alert.showAndWait();
                     System.out.println("Delete Student ID: " + student.getId());
                 }
+                students.removeAll(selectedStudents);
             }
-            students.removeAll(selectedStudents);
+        } else {
+            alert.setTitle("Delete Notify");
+            alert.setHeaderText("Selected student, pls!");
+            alert.setContentText("Student aren't select");
+            alert.showAndWait();
         }
+
     }
 
     public void editStudent(){
-        ObservableList<Student> students, selectedStudents;
+        ObservableList<Student> selectedStudents;
         students = tableView.getItems();
         selectedStudents = tableView.getSelectionModel().getSelectedItems();
         Student student = new Student();
@@ -188,103 +185,115 @@ public class StudentController {
         window.setResizable(false);
 //        window.initModality(Modality.APPLICATION_MODAL);
 
-        for (Student studentChoice : students) {
-            if (selectedStudents.contains(studentChoice)) {
-                student = studentChoice;
-                System.out.println("before");
-                System.out.println("Edit Student ID: " + student.getId());
-                System.out.println("Edit Student name: " + student.getName());
-                System.out.println("Edit Student address: " + student.getAddress());
-                System.out.println("Edit Student age: " + student.getAge());
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+        if (selectedStudents.size() !=0){
+            for (Student studentChoice : students) {
+                if (selectedStudents.contains(studentChoice)) {
+                    student = studentChoice;
+                    System.out.println("before");
+                    System.out.println("Edit Student ID: " + student.getId());
+                    System.out.println("Edit Student name: " + student.getName());
+                    System.out.println("Edit Student address: " + student.getAddress());
+                    System.out.println("Edit Student age: " + student.getAge());
+                }
             }
+
+            Text title = new Text("Edit Student");
+
+            Label nameLabel = new Label("Name");
+            nameField.setText(student.getName());
+
+            Label ageLabel = new Label("Age");
+            ageField.setText(String.valueOf(student.getAge()));
+
+            Label addressLabel = new Label("Address");
+            addressField.setText(student.getAddress());
+
+            Button updateButton = new Button("Update");
+
+            Student finalStudent = student;
+
+            updateButton.setOnAction(event -> {
+                finalStudent.setName(nameField.getText());
+                finalStudent.setAge(Integer.parseInt(ageField.getText()));
+                finalStudent.setAddress(addressField.getText());
+
+                if (confirmedBox(updateButton.getText())){
+                    alert.setTitle("Student Update notify" );
+                    alert.setHeaderText("Student Updated");
+                    alert.setContentText("Student Updated successfully!" );
+                    alert.showAndWait();
+
+                    System.out.println("after");
+                    System.out.println("Edit Student ID: " + finalStudent.getId());
+                    System.out.println("Edit Student name: " + finalStudent.getName());
+                    System.out.println("Edit Student address: " + finalStudent.getAddress());
+                    System.out.println("Edit Student age: " + finalStudent.getAge());
+
+                    studentsRepository.update(finalStudent);
+
+                    ObservableList<Student> studentsList = FXCollections.observableArrayList();
+                    studentsList.addAll(studentsRepository.findAll());
+                    tableView.setItems(studentsList);
+
+                }
+
+            });
+
+            Button cancelButton = new Button("Cancel");
+            cancelButton.setOnAction(event -> window.close());
+
+            VBox field = new VBox();
+            VBox label = new VBox();
+            VBox text = new VBox();
+            text.getChildren().addAll(title);
+            label.getChildren().addAll(nameLabel, ageLabel, addressLabel);
+            field.getChildren().addAll(nameField, ageField, addressField);
+            text.setAlignment(Pos.CENTER);
+            label.setAlignment(Pos.CENTER_RIGHT);
+            field.setAlignment(Pos.CENTER);
+            text.setSpacing(16);
+            label.setSpacing(24);
+            field.setSpacing(16);
+
+            HBox layout = new HBox();
+            layout.getChildren().addAll(label, field);
+            layout.setAlignment(Pos.CENTER);
+            layout.setSpacing(8);
+
+            HBox buttons = new HBox();
+            buttons.getChildren().addAll(updateButton, cancelButton);
+            buttons.setAlignment(Pos.CENTER);
+            buttons.setSpacing(8);
+
+            VBox vbox = new VBox();
+            vbox.getChildren().addAll(text, layout, buttons);
+            vbox.setAlignment(Pos.CENTER);
+            vbox.setSpacing(24);
+
+            Scene scene = new Scene(vbox, 300, 250);
+            window.setScene(scene);
+            window.showAndWait();
+
+        } else {
+            alert.setTitle("Delete Notify");
+            alert.setHeaderText("Selected student, pls!");
+            alert.setContentText("Student aren't select");
+            alert.showAndWait();
         }
-
-        Text title = new Text("Edit Student");
-
-        Label nameLabel = new Label("Name");
-        nameField.setText(student.getName());
-
-        Label ageLabel = new Label("Age");
-        ageField.setText(String.valueOf(student.getAge()));
-
-        Label addressLabel = new Label("Address");
-        addressField.setText(student.getAddress());
-
-        Button updateButton = new Button("Update");
-
-        Student finalStudent = student;
-
-        updateButton.setOnAction(event -> {
-            finalStudent.setName(nameField.getText());
-            finalStudent.setAge(Integer.parseInt(ageField.getText()));
-            finalStudent.setAddress(addressField.getText());
-            studentsRepository.update(finalStudent);
-
-            if (confirmedBox(updateButton.getText())){
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Student Update notify" );
-                alert.setHeaderText("Student Updated");
-                alert.setContentText("Student Updated successfully!" );
-                alert.showAndWait();
-
-                System.out.println("after");
-                System.out.println("Edit Student ID: " + finalStudent.getId());
-                System.out.println("Edit Student name: " + finalStudent.getName());
-                System.out.println("Edit Student address: " + finalStudent.getAddress());
-                System.out.println("Edit Student age: " + finalStudent.getAge());
-
-                ObservableList<Student> studentsList = FXCollections.observableArrayList();
-                studentsList.addAll(studentsRepository.findAll());
-                tableView.setItems(studentsList);
-            }
-        });
-
-
-        Button cancelButton = new Button("Cancel");
-        cancelButton.setOnAction(event -> window.close());
-
-        VBox field = new VBox();
-        VBox label = new VBox();
-        VBox text = new VBox();
-        text.getChildren().addAll(title);
-        label.getChildren().addAll(nameLabel, ageLabel, addressLabel);
-        field.getChildren().addAll(nameField, ageField, addressField);
-        text.setAlignment(Pos.CENTER);
-        label.setAlignment(Pos.CENTER_RIGHT);
-        field.setAlignment(Pos.CENTER);
-        text.setSpacing(16);
-        label.setSpacing(24);
-        field.setSpacing(16);
-
-        HBox layout = new HBox();
-        layout.getChildren().addAll(label, field);
-        layout.setAlignment(Pos.CENTER);
-        layout.setSpacing(8);
-
-        HBox buttons = new HBox();
-        buttons.getChildren().addAll(updateButton, cancelButton);
-        buttons.setAlignment(Pos.CENTER);
-        buttons.setSpacing(8);
-
-        VBox vbox = new VBox();
-        vbox.getChildren().addAll(text, layout, buttons);
-        vbox.setAlignment(Pos.CENTER);
-        vbox.setSpacing(24);
-
-        Scene scene = new Scene(vbox, 300, 250);
-        window.setScene(scene);
-        window.showAndWait();
     }
 
-    public TableView<Student> findStudent(String findId){
-        TableView<Student> tableView = new TableView<>();
-        if (studentsRepository.findById(Long.parseLong(findId)) != null){
+    public void findStudent(String findId){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
-            window.setTitle("Find Student");
-            window.setMinWidth(400);
-            window.setResizable(false);
+        if(findId == null || findId.isEmpty()){
+            alert.setTitle("Delete Notify");
+            alert.setHeaderText("Selected student, pls!");
+            alert.setContentText("Student aren't select");
+            alert.showAndWait();
+        } else if (studentsRepository.findById(Long.parseLong(findId)) != null){
 
-            //tao cac cot
             TableColumn<Student, Long> idColumn = new TableColumn<>("Id");
             idColumn.setMinWidth(100);
             idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -310,28 +319,50 @@ public class StudentController {
             tableView.setItems(students);
             tableView.getColumns().addAll(idColumn, nameColumn, ageColumn, addressColumn);
             tableView.setEditable(true);
-//            tableView.refresh();
-            Scene scene = new Scene(tableView, 600, 300);
-            window.setScene(scene);
-            window.showAndWait();
 
-        } else if (findId.trim().isEmpty()){
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Founding Notify");
-            alert.setHeaderText("Field Empty!");
-            alert.setContentText("Not Field");
-            alert.showAndWait();
         } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Founding Notify");
             alert.setHeaderText("Not Found!");
             alert.setContentText("Not Found Student");
             alert.show();
         }
-
-        return tableView;
     }
 
+    public Menu menuFile(){
+        //File menu
+        Menu fileMenu = new Menu("File");
+
+        //Menu items
+        MenuItem newTable = new MenuItem("New tables");
+        MenuItem openTable = new MenuItem("Open tables");
+        
+        fileMenu.getItems().addAll(newTable, openTable);
+
+        return fileMenu;
+    }
+    public Menu menuEdit(){
+        //File menu
+        Menu fileMenu = new Menu("Edit");
+
+        //Menu items
+        fileMenu.getItems().add(new MenuItem("Reload..."));
+        fileMenu.getItems().add(new MenuItem("Add..."));
+        fileMenu.getItems().add(new MenuItem("Delete"));
+        fileMenu.getItems().add(new MenuItem("Edit"));
+
+        return fileMenu;
+    }
+    public Menu menuHelp(){
+        //File menu
+        Menu fileMenu = new Menu("Help");
+
+        //Menu items
+        fileMenu.getItems().add(new MenuItem("Question 1"));
+        fileMenu.getItems().add(new MenuItem("Question 2"));
+        fileMenu.getItems().add(new MenuItem("Question 3"));
+
+        return fileMenu;
+    }
 
     private void clear(){
         nameField.clear();

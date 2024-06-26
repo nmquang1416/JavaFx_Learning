@@ -2,11 +2,9 @@ package tutorial.javafxapplication;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -22,12 +20,18 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        //Main menu bar
+        MenuBar menuBar = new MenuBar();
+
         StudentController studentController = new StudentController();
         Student student = new Student();
         TableView<Student> firstLoadTable = studentController.showAllStudents();
+
         window = stage;
         window.setTitle("Students Table");
-        window.setResizable(false);
+//        window.setResizable(false);
+
+        menuBar.getMenus().addAll(studentController.menuFile(), studentController.menuEdit(), studentController.menuHelp());
 
         Button buttonAdd = new Button("Add Student");
         buttonAdd.setOnAction(event -> studentController.createNewStudent());
@@ -47,8 +51,11 @@ public class Main extends Application {
         HBox hbox = new HBox();
         hbox.getChildren().addAll(buttonAdd, buttonDelete, buttonEdit, findInput);
 
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(menuBar);
+
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(hbox, firstLoadTable);
+        vbox.getChildren().addAll(menuBar, hbox, firstLoadTable);
         Scene scene = new Scene(vbox);
         window.setScene(scene);
         window.show();
